@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tripla · Ferramenta SDR — CIO Brasil 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #152454;
+    --tang: #0057D5;
+    --celestial: #00A0FF;
+    --sky: #38DBFF;
+    --white: #ffffff;
+    --gray-50: #f7f9fc;
+    --gray-100: #eef1f7;
+    --gray-200: #dde3ef;
+    --gray-400: #8a97b5;
+    --gray-600: #4a5574;
+    --tag-gestao-bg: rgba(21,36,84,0.12);
+    --tag-gestao-fg: #152454;
+    --tag-infra-bg: rgba(21,36,84,0.12);
+    --tag-infra-fg: #0046b0;
+    --tag-si-bg: rgba(0,160,255,0.12);
+    --tag-si-fg: #0077cc;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--gray-50);
+    color: var(--navy);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--navy);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(21,36,84,0.25);
+  }
+
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo-icon {
+    height: 52px;
+    width: auto;
+    display: block;
+    object-fit: contain;
+  }
+
+  .logo-text {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--white);
+    letter-spacing: -0.5px;
+  }
+
+  .header-badge {
+    background: rgba(0,160,255,0.18);
+    border: 1px solid rgba(0,160,255,0.4);
+    color: var(--sky);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  /* ── NAV TABS ── */
+  .nav-tabs {
+    background: var(--white);
+    border-bottom: 2px solid var(--gray-200);
+    display: flex;
+    gap: 0;
+    padding: 0 32px;
+    position: sticky;
+    top: 72px;
+    z-index: 90;
+    box-shadow: 0 1px 8px rgba(21,36,84,0.06);
+  }
+
+  .tab-btn {
+    padding: 16px 28px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray-400);
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+
+  .tab-btn:hover { color: var(--navy); }
+
+  .tab-btn.active {
+    color: var(--navy);
+    border-bottom-color: var(--navy);
+  }
+
+  .tab-btn .tab-count {
+    display: inline-block;
+    background: var(--gray-100);
+    color: var(--gray-600);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-left: 7px;
+  }
+
+  .tab-btn.active .tab-count {
+    background: rgba(21,36,84,0.12);
+    color: var(--navy);
+  }
+
+  /* ── PAGES ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── EMPRESAS PAGE ── */
+  .page-content {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 32px 32px 64px;
+  }
+
+  .search-bar-wrap {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 12px rgba(21,36,84,0.07);
+    display: flex;
+    gap: 16px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .search-field {
+    flex: 1;
+    min-width: 240px;
+  }
+
+  .search-field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    margin-bottom: 8px;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--gray-200);
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--navy);
+    transition: border-color 0.2s;
+    outline: none;
+    background: var(--gray-50);
+  }
+
+  .search-input:focus {
+    border-color: var(--navy);
+    background: var(--white);
+  }
+
+  .filter-select {
+    padding: 12px 16px;
+    border: 2px solid var(--gray-200);
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--navy);
+    background: var(--gray-50);
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+    min-width: 180px;
+  }
+
+  .filter-select:focus { border-color: var(--navy); background: var(--white); }
+
+  .results-summary {
+    font-size: 13px;
+    color: var(--gray-400);
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+
+  .results-summary span { color: var(--navy); }
+
+  /* ── COMPANY GRID ── */
+  .companies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+
+  .company-card {
+    background: var(--white);
+    border-radius: 14px;
+    border: 1.5px solid var(--gray-200);
+    padding: 20px 22px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .company-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--navy), var(--celestial));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .company-card:hover {
+    border-color: var(--navy);
+    box-shadow: 0 4px 20px rgba(21,36,84,0.12);
+    transform: translateY(-1px);
+  }
+
+  .company-card:hover::before { opacity: 1; }
+
+  .company-card.expanded {
+    border-color: var(--navy);
+    box-shadow: 0 6px 28px rgba(21,36,84,0.14);
+  }
+
+  .company-card.expanded::before { opacity: 1; }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .company-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--navy), var(--celestial));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--white);
+    flex-shrink: 0;
+    margin-right: 12px;
+  }
+
+  .company-name-wrap { flex: 1; }
+
+  .company-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.2;
+  }
+
+  .company-dore-count {
+    font-size: 12px;
+    color: var(--gray-400);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  .company-dore-count.high { color: #d97706; }
+  .company-dore-count.very-high { color: #dc2626; }
+
+  .expand-icon {
+    color: var(--gray-400);
+    font-size: 18px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .company-card.expanded .expand-icon { transform: rotate(180deg); color: var(--navy); }
+
+  .dores-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .tag {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  .tag.gestao { background: var(--tag-gestao-bg); color: var(--tag-gestao-fg); }
+  .tag.infra { background: var(--tag-infra-bg); color: var(--tag-infra-fg); }
+  .tag.si { background: var(--tag-si-bg); color: var(--tag-si-fg); }
+
+  .dores-expanded {
+    display: none;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--gray-100);
+  }
+
+  .company-card.expanded .dores-expanded { display: block; }
+
+  .cat-block { margin-bottom: 12px; }
+
+  .cat-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    margin-bottom: 6px;
+  }
+
+  .no-dores {
+    font-size: 13px;
+    color: var(--gray-400);
+    font-style: italic;
+    padding: 8px 0;
+  }
+
+  /* ── HORARIOS PAGE ── */
+  .horarios-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 32px 64px;
+  }
+
+  .horarios-header {
+    margin-bottom: 32px;
+  }
+
+  .horarios-header h2 {
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+
+  .horarios-header p {
+    color: var(--gray-600);
+    font-size: 14px;
+  }
+
+  .day-group { margin-bottom: 36px; }
+
+  .day-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .day-circle {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--navy), var(--celestial));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .day-num {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1;
+  }
+
+  .day-month {
+    font-size: 9px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .day-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--navy);
+  }
+
+  .day-sub {
+    font-size: 12px;
+    color: var(--gray-400);
+    font-weight: 600;
+  }
+
+  .slot-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .slot-card {
+    background: var(--white);
+    border-radius: 14px;
+    border: 1.5px solid var(--gray-200);
+    padding: 18px 22px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .slot-card:hover {
+    border-color: var(--celestial);
+    box-shadow: 0 3px 14px rgba(0,160,255,0.1);
+  }
+
+  .slot-card.happy-hour {
+    border-color: rgba(21,36,84,0.3);
+    background: linear-gradient(135deg, rgba(21,36,84,0.03), rgba(0,160,255,0.05));
+  }
+
+  .slot-time-block {
+    background: linear-gradient(135deg, var(--navy), var(--celestial));
+    border-radius: 10px;
+    padding: 10px 14px;
+    text-align: center;
+    flex-shrink: 0;
+    min-width: 90px;
+  }
+
+  .slot-time {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--white);
+    white-space: nowrap;
+  }
+
+  .slot-time-end {
+    font-size: 11px;
+    color: rgba(255,255,255,0.8);
+    margin-top: 2px;
+  }
+
+  .slot-info { flex: 1; }
+
+  .slot-local {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+
+  .slot-obs {
+    font-size: 13px;
+    color: var(--gray-600);
+    line-height: 1.5;
+  }
+
+  .slot-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-top: 6px;
+  }
+
+  .slot-badge.happy {
+    background: rgba(21,36,84,0.1);
+    color: var(--navy);
+  }
+
+  .slot-badge.coffee {
+    background: rgba(120,80,40,0.1);
+    color: #7a5030;
+  }
+
+  .slot-badge.almoco {
+    background: rgba(30,140,60,0.1);
+    color: #1e6e3a;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 64px 32px;
+    color: var(--gray-400);
+  }
+
+  .empty-state .empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .empty-state p {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .page-content, .horarios-wrap { padding: 20px 16px 48px; }
+    header { padding: 0 16px; }
+    .nav-tabs { padding: 0 16px; }
+    .tab-btn { padding: 14px 16px; font-size: 13px; }
+    .companies-grid { grid-template-columns: 1fr; }
+    .search-bar-wrap { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-wrap">
+    <img class="logo-icon" src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAEAAeEDASIAAhEBAxEB/8QAHQABAAEFAQEBAAAAAAAAAAAAAAgEBQYHCQIDAf/EAFAQAAEDAwEEBAcJDAcJAQAAAAABAgMEBQYRBxIhMQgTN0FRYXF1kbKzFCIyNnSBobHBCRUWGDVSVnKSlLTSI0JTYoKT0RcmM1djc6LC1PH/xAAbAQEAAgMBAQAAAAAAAAAAAAAABAUBAgMGB//EAC0RAQACAgEDAgUDBQEBAAAAAAABAgMRBAUSMSFBEzJRYYEiM5EGQnGhwdEU/9oADAMBAAIRAxEAPwCNoAPVq0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfp+AAAAAAAAAAAAAAAAAAAAB+pxXRD11Un9m/wBAHgHtY5ETVWORPIeAAAAAAAAAABfMRxHJstrVo8bsddc5W6b/AFESq2NF73O5NTyqhiZiI3LPlYwSYwDomXytZDV5pe4bXEvvn0dHpLPp4FevvGr5N5CON3p2Ul1q6WJXKyGd8bVdz0RyomvoOePNTJMxWd6ZtSa+VKADq1AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABU0FFPWy7kLeCfCcvJC+01hpWNTr3vld36LohW2mnbT0ETGpxVqOcvhVSqPa9P6Ngx44tljutP18Q8nzeq5r3muOdVhTRW+iiTRlLF5VbqvpU+yQxJyiYnkah7Bc1w46RqtYj8Kq2W9vW0zLz1cf5jfQeHU1O/4UETvKxFPqDM0rPmGIvaPErdUWahl1VsaxOXvYv2FhudtmoVRXKj415PT7TLz51ULainfC9EVHJoVfO6Rgz0maV7be2v8Aqx4nVM2G0Rad1+7Bgfp+HhHsQyDZ5iV0znLqLGLM6nZWViu3HTvVsbUa1XOVVRFXgiLyRS2Wq0XW6ukba7ZW1yxoiyJTQOk3deWu6i6clNs9GS2XfHNtNju18st2oaGPrmSTy0EqMYroXtbqu7wTVUTU55b9tJmPLasbmG5Nn/RNxygalRmd3qLxPqi+56TWCBvhRXfDd5UVpjvTYxjHsXw3EqHHrNQ2ynSqnRW08KNV2jGcXLzcvjVVUlhSVNPVRJLTytkYvehHzpwYzkGQ4xj0lis9bc0pKqZZ20sSyOYjmN0VUTjpwUp8HIvfPWbylXpEUnUIVAvU+J5VBE+WfGrzFHG1XPc+hlRGonNVVW8ELOxrnvRjGq5zl0RETVVUu4mJ8IjyC+fgflv6LXz9wl/lKa449f7bTLU3Gx3OjgRURZZ6R8bdV5JqqIg7o+pqVsBdMbx6+5JX+4bBaK251Omqx00KvVqeFdOSeNTI8i2S7SMftclzu+IXKno42K+SZGo9sbU4qrt1V3U8a6GJvWJ1MmpWvZd2mYt55pPbMOnRy3w+ulteW2e5U9G+tmpK+CeOmYqo6ZzJGuRiaIq6qqacl58lJd/jGZt/yJyH94m/+Yrufhvkmva74bxWJ23Bto7H8z8w1vsHnM8lrn23rL7zg1+tFVsYvtugrrbUU8tXJPKradr43NWRUWnRNGouvFU5c0IlHTgYrY6zFmM1otMaAD2kcixLKjHLG1yNV2nBFXXRNfDwX0KT3B4BU22grrnWMordR1FZUyLoyGCNXvd5ETiZ3SbEdq9VTpPFhFzRipqnWIyN37LnIv0Gtr1r806ZiJnw12C+5Ph+VYxu/hDj1ytjXO3WvqadzGuXwI5U0UsRmJiY3BrQdL9i1PBT7IsQSngjiR9ko3uRjEbvOWBiq5dOaqvNTmgdM9j3ZJh3mGh/h2Fb1P5Ku/H8yypeSnLLI/jDcvlcvrqdTV5Kcssj+MNy+Vy+upp0zzb8NuR7LeAZBj+E5hkETZrJjF3uETuUkFI9zF/xaaFrMxHrKNrbHwbJpthG1uoZvx4TXNT/AKksTF9DnopR3bY5tRtbFfV4Rd91E1V0MSTInzsVTT42OfTuj+We230YED6VEM1PM+CeJ8UrF3Xse1WuavgVF5HzOjUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAZtb5GzUMMjV1RWJ6e8+5ilouj6JVje1Xwquqp3p40L9T3Shn+DO1q+B/vfrPecDqmDPjrFrRFvpLxvN6dmw5JmK7r9VaDw2aJyatlYvkch63m/nJ6S0i0T4lXTWY9n6Dw6WJvORieVyHxmuFFEmr6mLyI7VfoNb5sdI3a0R+W1cV7+lYmVSUt0qm0lG+RV0cqaMTwqU6XT3Q7qrdSVFXKvBEYxf/ANPVHjV4vuWUVjle1KuZd6VjPfJTR81V3drp3eTwlTzuq0pimMH6p8bjxG/um8fhxW++RPbEesxPnUefT6fdjNRSz08VPJNGrG1EfWxKv9Zu85uvpavoPgbN6QVtprTfLNQUbNyCntjImIvPRrnJx8ZrI8Vkp2Wmr1PB5Ucvj1zRGu7/ANSl+5+flbL/APsUvrSkuDmvss2m5Rs2nr5sZfSMfXtY2f3RB1nBiuVNOPD4SkluixtkzTaLndws+SS0D6Wntj6liQU3Vu30lianHXlo9Sk5vGvNrZPZa4skREVSSANJ9K7aVk2zez2Kqxp9IyStqJY5vdEPWJo1rVTTjw5qV+PHOS0VjzLva0VjctmbSuzrJPNNV7JxzRx78v275VF66G1rx0lNpt1tNZbKue0rT1cD4Jd2iRF3XtVq6LrwXRTVOPfl+3fKovXQuuJx74a2i3uiZbxeY06nGs+klilxzbZ9BjNrREnrLpTNV7vgxMRVV718SNRVNmApKXmlotHslzG40xrZxhGP4FjcFjsFGyKNjU66ZUTrKh/e97u9V9Cck0QpNt3Y9mHmaq9k411tx6RdmwK7y49Zbcl7vEC6VO9L1cFOumu6qoiq53hRNNO9deBpjKelFkeRYvd7BXYzao4LlRy0qyQyyI6NHtVu9xVUXTXkS8XFzZJjJMOdslIjTUOy7tMxbzzSe2YdOjmLsu7TMW880ntmHTo79T+arTj+JYlto7H8z8w1vsHnNyxW+S7XugtUUjY5K2pjp2Pdyar3I1FXxcTpHto7H8z8w1vsHnO3Z12g4551pfatN+nTrHaWM/mEwcA6LOD2R0VVklVVZHVM4rG/+hp9f1GrvL87tF8BX9JDZv8AhBguM4Xh9ro7dHNkESuSCBGRQMSnn3pHI1OSJ6V0TvN3gr//AKck3i8zvTt8OutQw7ZZs3xjZ1Y2W+xUTPdCtRKmtkaiz1C96ud4NeTU4IZiab6S22dNmNBSW60QU1ZkFe1XxsmVVZTxJw6xzU4rqvBE1TXRV7tFi7R9Ija7T3Rtc/KVqER+86nlpIeqen5qojUVE8iovjO2PiZc8d+/5azkrT0T+uVDRXKhlobhSQVdLM3dkhmYj2PTwKi8FIW9KjYhT4R/vbi0bksE0qMqaZXarRyOX3u739WvLjyXRO9CS+wTabSbUMN++radtJcqWTqa+ma7VrH6ao5vfuuTimveipx01Mvy2yUeSYxcrDcImSU1fTvgej26omqcHeVF0VPAqIaYst+Nk1P5ZtWMlXLY6Z7HuyTDvMND/DsOa94oKm1XastdazcqaOd9PM3XXdexytcnpRTpRse7JMO8w0P8OwndS9aVccHmWVLyU5ZZH8Ybl8rl9dTqavJTllkfxhuXyuX11NOmebfhtyPZtvoY2u23bbJ1F0oKWuiits0rGVESSNa9HM0ciLw1TVeJPFrWsYjWojWtTRERNERDmfsuzy77O8hnvtjipZK2SkfStWoYrmsR6tXe0RU1VN3hrwGX7SM6y3fbkGUXKsheuroOt6uH/LZo36DryeHfNk3vUNMeWKV06UxV9DLN1EVbTPl5bjZWq70alQcp4Iah6o+CKVyouqKxqrovzEoeh7tMy+fMG4VkVTXXG31UD3UstWrnPp3sbruo5eKtVqKmi8lRNNOOsbNwJx1m0W3p0pm7p1MN8bX9k+K7SLTLFcqOOnuqM0prlEzSWJ3dr+e3+6vzaLxOe2XWC44vktwx+7QrFW0M7oZE7l05OTwtVNFRe9FQ6kEM+nnjsdDnNlySHRPvpRuhmRE/rwqnvvnbI1P8Jnp+eYv8OfEsZ6RruRuABcooAAAAAAAAAAAAAAAAAAAAAAAAAABecNtCXq/Q0b9UhTV8yp+and8/BPnLMZvsedGl9qmu+GtN739pNfsJfBxVy8ilLeJlXdY5F+PwcuXH5iPT/wB/DI59ndhkVVZJWw+JkqKn0op8U2b2fXjW1/7TP5TNgeznpvFn+yHyyOvdRiNfGliNPs9x+NffrWT/AK8qJ6qIXGmxHHIFRWWuF2n9oqv+tS+llyrIaSw0e/J/S1L/APgwIvFy+HxJ4xbjcTj1m80iIj7MU5/UubkjFXJaZn2iZfHJrvT4/b2U1BTMdWzruUtNExOKrw13U7vrXgZzskw12N2uSvuaJLe69d+pkXirEXijEX6V8fkQs+ynB6ttb+F+VM37pMmtNTvThTt7lVO52nJO7y8tolHnz25N++Y1EeI/7/l35WWnFxTxcNtzPz2+s/SPtH+5R76Tb0XLbczvbQ6+l7jU5szpH1LZtoDIWrxp6KNjvKqud9SoazKPPO8kvpPQqzXp+KJ+gSH6BXavePMcnt4CPBILoHTxx7XbnE92jpbHKjPGqTQrp6EX0EHl/s2XOP5oTbIw/dAPi5inyuo9RhJ4jT0+6SWTC8brWtVY4bhJG9fAr49U9RSm4f79UrL8kocFfj35ft3yqL10KAr8e/L9u+VReuh6CfCFDqcW/JLg2047c7q74NFSS1C+RjFd9hcDGdrHZZlvmSs9g88vWN2iFhPhzQuNXUXC4VNfVyOlqKmV00r3LqrnuVVVVXyqU4B6lXMj2XdpmLeeaT2zDp0cxdl3aZi3nmk9sw6dFR1P5qpXH8SxLbR2P5n5hrfYPOduzrtBxzzrS+1adEttHY/mfmGt9g8527Ou0HHPOtL7Vpv0/wDbsxn+aHT8AFQkoC9Mmpln29XaKRVVtPT00Uevc3qmu+tymnCSPTmwqvos0pc3giWS3XGBlPO9qKvVTsTREd4Ec3TT9VxG49JxbROGuvogZI1aUkegNWVEef5BQNc73PNa0lkb3K5krUavoe70kzCNnQZwass+O3PMbnTSQPu25DRNe3RVgYqqr9PA5ypp+pr3kkZHsjjdJI5Gsaiuc5V4Iid5Tc20WzTpLxRqjm7t+iZDtrzBkaaNW7TvXyudvL9KqT62PdkmHeYaH+HYc7NpF6jyLaBkF9hVVhr7lPURapx6t0iq3/x0Oiex7skw7zDQ/wAOwlc+JjFSJcsPzSypeSnLLI/jDcvlcvrqdTV5Kcssj+MNy+Vy+uo6Z5t+GeR7N19HXo/T59QsybJamegsDn6U8cOiTVeiqjlRV+CzVNNdFVeOmnMlZi+ybZxjaRrasPtLZY097NPAk8qePfk1X6TJ8ctcFksFvs9K1rYKKmjp40RNE0Y1G/YW3aVfZ8Y2f37IKWFJqi30Es8TFTVFc1qqmvi15+IiZeRkzX1E+jpXHWkL42KngiRGxxRRtTgiIiIiH5FPSPkRsU0Dn9yNciqcycszbLcqr31t/wAguFdI5VVGvnd1bPE1ie9aniRENsdCey3O67XkvLUldQ2qlkfPKqruo97VYxvlXVy+RqnfJwPh0m9reGkZtzqITkIvfdAGNWw4pJp75KqoRF8W6z/QlCRg+6AfF3Fflc/qNOHC/fq3y/JKIIAPQoIAAAAAAAAAAAAAAAAAAAAAAAAAABXWO5VFpukNfTL7+NeLV5OTvRfKhQg2raaWi1fMNMmOuWk0vG4n0lvfHr3QXujSejlTeRE6yJV99GvgVPtLmqoiarwQjzDNLBIkkMr4npycxyoqfOh96i53Kpj6uouFXMz818znJ9Kno8f9Q6p+um5/y8Nn/oreWZxZdV+8bmP9+rat6y1i1LLXjsK3W5zLuxtiRXNavzc/m+dTMNm+zh9BWpkeVSNrry/R8carvMp1+pXJ6E7vCaGw69zY5k1DeYW7600mr2a6b7F4Ob86KpLXH7xb77aorlbKhs9PKnBU5tXvaqdyp4CJPMtzLbyT48R7InWOFbo+KMXGj9N4/Vb3n7faPtHlcACw51ktHi2O1FzqpGJIjVbTxKvGWTTg1E+vwIdJmKxuXlcWK+a8Y6RuZ8I17XK1K/aPe50XVEqOqT/A1Gf+pip9KmeWpqZamd6vller3uXmrlXVVPmUdp7pmX2vjYfg4aY4/tiI/iA2J0ccpp8P2w2O7V06QUL5HU1TI74LWSNVu8viRVaq+Q12DnesXrNZ93eJ1O3V1FRU1RdUUtGY41Zcux6psOQUTKygqETfY5dFRUXVHNVOKKi8lQh9sb6Td5xW2QWPLKCS+W+nYkdPURybtTE1O5VXhIiJwTXRU05qbkoOlRsvqId+dL3Rv/Mlo0cvpa5UKG/EzY7ekfwmRlpaFsvvRd2bW603O5xVF/kdBSyyxwyVbOrRzWKqco0dpqnhIcY9+X7d8qi9dCX+Z9KfAaiyXC3Wy2X2rkqKaSFr3QsjZq5qoi8X66cfAQ5ttQlJcaaqc1XJDMyRWovPRUXT6Cz4cZu2fiOGXt3Ha6qmM7WOyzLfMlZ7B5oj8cCx/oVcf3xn8pasw6VdmvuJXmyR4hXwvuFBPStkdVsVGLJG5iOVN3jprqVtOHmi0T2u85aa8oqAAv0Jkey7tMxbzzSe2YdOjltiNzjsuWWe8zRvljoK6CpexnwnJHI1yomveuhLX8b3Ff0TvX+bF/qVvPwZMkx2RtIw3rWJ23Pto7H8z8w1vsHnO3Z12g4551pfatJI530pMayLCL7YKfGbtDNcrdUUkcj5I1ax0kbmIq6LroiqRu2ddoOOedaX2rTbh4r48dotGmMtotMadPynuddR2yhlrrhUxUtLEiLJNK7dYxNdNVXuTjzKgwHpE9h+XebZPsKale60QlTOo2za40VFcqGWiuFJT1lJM3dlhnjR8b08CtXgqGB2/Yfspobsl0p8Lt/uhrt5qSOfJGi+KNzlZ9BGPYv0lb9h1vhseTUkl+tULdyCTrd2pgTuTeXVHtTkiLoqcOOiaG7KLpUbL56ZJJ0vdLJpxifRo5fS1yoS7cbkYpmK719nOMlLeW842MjY1kbWsY1NGtamiIngQ0x0sdpcGE4DPZqCqjS/3mNYYI9NXRQO1SSVfBw1anjXVNdFMCzvpb0KUEkGFY/Uuq3cG1Ny3Wsj8aRsVVcvlVPn5EWsnv8AeMmvdRer7XzV1fUO3pJZF+hE5IidyJoidx24vBtNu7JGoaZM0a1VbDpnse7JMO8w0P8ADsOZhKnCulTZ8fw2yWGXEa+eS22+no3Stq2Ij1jjaxXIm7wRd3Uk8/DfLWIpG3PDaKzO0tF5Kcssj+MNy+Vy+upK9el/Y9PiVcf3xn8pEm51CVlyqqtrVYk8z5Eaq8t5yrp9JrwMGTFNu+NM5rxbWnSjZBllFmuzu0X6jnbK+WnYypRF4xztaiSNXxov0Ki95k1fSU1dRT0VZCyemqI3RSxvTVr2OTRUXxKinOHZLtSyrZrcpKiw1LJKWdU900VQiuhl079Nfeu/vJx8pIy09L3G5KZq3TErrTz6e+SnmjlZr4lXdX6CJm4OStt0jcOtM1Zj1Xmt6J+zqe6rVQ3LIKWlcuq0sdRGrU8SOcxXInl1Xxmz8etGE7LbFQWa2Q09qp62sjpYEVd6WqqJF0bq5eL3fUidyIaLyPpfW9tJIzHsQqpKlU0jkrqhrWNXwq1mqu8mqeU0TcNrOTX7afY80yeqfXfemvgqY6OL+jiYxkjXqxjeSaommq6qveqnSONyMsayT6NZyUr8ro0Rg+6AfF3Fflc/qNPX44Fj/Qq4/vjP5TVHSM20UG1S22iko7FU2xbfNJI50s7X7+81E0TRE05GvF4uWmWLWj0ZyZKzWYiWlgAXSIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAF0x7Ib1j9T7os1xno3r8JGLq136zV4L86FrBmJmPWGt8dclZreNxPtLYy7Zs1Wn6rraBH6adb7mTe8vPT6DCr9fLtfqz3Xd6+asm7lkXg1PA1E4IniQtwNrZL29JlGwdP4vHt3YscVn7QAA0SwAAAAAAAAAAAAAAAAv2zrtBxzzrS+1aWEvOD1MFFmtirKqVsVPBcaeWWR3JjWyNVVXyIhi3yyzHl1EMB6RPYfl3m2T7Dx/ts2U/pzaf23f6GGbcNrGzi87JMmtVry+21dbVUD44IY3LvPcunBOB5zFivF4/TPlOtaNT6oLAA9IgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/9k=" alt="tripla">
+  </div>
+  <div class="header-badge">CIO Brasil 2026</div>
+</header>
+
+<!-- NAV TABS -->
+<nav class="nav-tabs">
+  <button class="tab-btn active" onclick="switchTab('empresas')">
+    🏢 Empresas & Dores
+    <span class="tab-count" id="total-count">95</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('horarios')">
+    📅 Horários do Evento
+    <span class="tab-count">9</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('reunioes')">
+    🤝 Reuniões Agendadas
+    <span class="tab-count">95</span>
+  </button>
+</nav>
+
+<!-- PAGE: EMPRESAS -->
+<div class="page active" id="page-empresas">
+  <div class="page-content">
+
+    <div class="search-bar-wrap">
+      <div class="search-field" style="flex:2">
+        <label>Buscar empresa</label>
+        <input type="text" class="search-input" id="search-empresa" placeholder="Ex: Renault, Azul, Roche…" oninput="filterEmpresas()">
+      </div>
+      <div class="search-field">
+        <label>Filtrar por categoria</label>
+        <select class="filter-select" id="filter-cat" onchange="filterEmpresas()">
+          <option value="">Todas as categorias</option>
+          <option value="GESTÃO">GESTÃO</option>
+          <option value="INFRA">INFRA</option>
+          <option value="SI">SI</option>
+        </select>
+      </div>
+      <div class="search-field">
+        <label>Filtrar por dor específica</label>
+        <select class="filter-select" id="filter-dor" onchange="filterEmpresas()">
+          <option value="">Todas as dores</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="results-summary" id="results-summary">Mostrando <span id="count-visible">95</span> de <span>95</span> empresas</div>
+
+    <div class="companies-grid" id="companies-grid"></div>
+
+    <div class="empty-state" id="empty-state" style="display:none">
+      <span class="empty-icon">🔍</span>
+      <p>Nenhuma empresa encontrada com esses filtros.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- PAGE: HORARIOS -->
+<div class="page" id="page-horarios">
+  <div class="horarios-wrap">
+
+    <div class="horarios-header">
+      <h2>Janelas de Contato no Evento</h2>
+      <p>Horários disponíveis no estande Tripla — Network Point · CIO Brasil 2026</p>
+    </div>
+
+    <div id="horarios-container"></div>
+
+  </div>
+</div>
+
+
+<!-- PAGE: REUNIÕES -->
+<div class="page" id="page-reunioes">
+  <div class="page-content">
+
+    <div class="search-bar-wrap">
+      <div class="search-field" style="flex:2">
+        <label>Buscar empresa ou executivo</label>
+        <input type="text" class="search-input" id="search-reuniao" placeholder="Ex: Renault, Alexandre, Roche…" oninput="filterReunioes()">
+      </div>
+      <div class="search-field">
+        <label>Filtrar por data</label>
+        <select class="filter-select" id="filter-data-reuniao" onchange="filterReunioes()">
+          <option value="">Todos os dias</option>
+          <option value="19/03/2026">Quinta · 19/03</option>
+          <option value="20/03/2026">Sexta · 20/03</option>
+        </select>
+      </div>
+      <div class="search-field">
+        <label>Filtrar por horário</label>
+        <select class="filter-select" id="filter-hora-reuniao" onchange="filterReunioes()">
+          <option value="">Todos os horários</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="results-summary" id="results-reunioes">Mostrando <span id="count-reunioes">95</span> de <span>95</span> reuniões</div>
+
+    <div style="background:var(--white);border-radius:14px;border:1.5px solid var(--gray-200);overflow:hidden;box-shadow:0 2px 12px rgba(21,36,84,0.07);">
+      <table id="reunioes-table" style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr style="background:var(--navy);color:var(--white);">
+            <th style="padding:14px 18px;text-align:left;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;white-space:nowrap;">Data</th>
+            <th style="padding:14px 18px;text-align:left;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;white-space:nowrap;">Horário</th>
+            <th style="padding:14px 18px;text-align:left;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Empresa</th>
+            <th style="padding:14px 18px;text-align:left;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Executivo</th>
+          </tr>
+        </thead>
+        <tbody id="reunioes-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="empty-state" id="empty-reunioes" style="display:none">
+      <span class="empty-icon">🔍</span>
+      <p>Nenhuma reunião encontrada com esses filtros.</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const DATA = {"empresas": [{"nome": "ADAMA", "dores": ["INFRA: Ativos de rede", "SI: Conectividade", "SI: Detecção de Intrusões", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Pentests", "SI: Políticas de Segurança", "SI: Softwares de Segurança", "SI: VPN", "SI: WAF"], "cats": {"INFRA": ["Ativos de rede"], "SI": ["Conectividade", "Detecção de Intrusões", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "LGPD/ISO", "Modernização de Dados", "Pentests", "Políticas de Segurança", "Softwares de Segurança", "VPN", "WAF"]}, "total": 14}, {"nome": "ADIMAX", "dores": ["GESTÃO: Compliance", "INFRA: Ativos de rede", "INFRA: Cabeamento Estruturado", "INFRA: Cabeamento de Rede", "INFRA: Controle de Acesso", "INFRA: Câmeras de Segurança", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: CASB", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Pentests", "SI: Recuperação de Dados", "SI: SIEM", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Ativos de rede", "Cabeamento Estruturado", "Cabeamento de Rede", "Controle de Acesso", "Câmeras de Segurança"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Imutável", "Backup Tradicional", "Backup em Nuvem", "CASB", "Conectividade", "Criptografia/PQC", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "Pentests", "Recuperação de Dados", "SIEM", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança"]}, "total": 38}, {"nome": "AGRÁRIA", "dores": ["GESTÃO: Compliance", "INFRA: Cabeamento Estruturado", "INFRA: Cabeamento de Rede", "INFRA: Controle de Acesso", "INFRA: Câmeras de Segurança", "INFRA: Fibra Ótica", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: CASB", "SI: Conectividade", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: Track Inteligence", "SI: VPN"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Cabeamento Estruturado", "Cabeamento de Rede", "Controle de Acesso", "Câmeras de Segurança", "Fibra Ótica"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Backup Imutável", "Backup Tradicional", "Backup em Nuvem", "CASB", "Conectividade", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "Pentests", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "Track Inteligence", "VPN"]}, "total": 41}, {"nome": "AGREX", "dores": ["INFRA: Ativos de rede", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: CASB", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: EDR/MDM", "SI: Ferramentas Antifraude", "SI: Gestão de Incidentes", "SI: IAM", "SI: LGPD/ISO", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: SIEM", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: VPN", "SI: WAF"], "cats": {"INFRA": ["Ativos de rede"], "SI": ["Antivirus", "Análise de Segurança de Dados", "CASB", "Conectividade", "Criptografia/PQC", "DLP", "EDR/MDM", "Ferramentas Antifraude", "Gestão de Incidentes", "IAM", "LGPD/ISO", "Monitoramento de SI", "NDR", "PAM", "Pentests", "Políticas de Segurança", "SIEM", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "VPN", "WAF"]}, "total": 23}, {"nome": "ALL4LABELS", "dores": ["INFRA: Ativos de rede", "INFRA: Cabeamento Estruturado", "SI: Appliances de SI", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Disaster Recovery", "SI: Educação e Treinamento", "SI: Firewall Físico", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: Monitoramento de SI", "SI: Pentests", "SI: Segurança de Rede"], "cats": {"INFRA": ["Ativos de rede", "Cabeamento Estruturado"], "SI": ["Appliances de SI", "Conectividade", "Criptografia/PQC", "DLP", "Disaster Recovery", "Educação e Treinamento", "Firewall Físico", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "Monitoramento de SI", "Pentests", "Segurança de Rede"]}, "total": 14}, {"nome": "ALPARGATAS", "dores": ["SI: Análise de Segurança de Dados", "SI: Backup em Nuvem", "SI: Conectividade", "SI: Modernização de Dados"], "cats": {"SI": ["Análise de Segurança de Dados", "Backup em Nuvem", "Conectividade", "Modernização de Dados"]}, "total": 4}, {"nome": "ANGELONI", "dores": ["GESTÃO: Compliance", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Detecção de Intrusões", "SI: Ferramentas Antifraude", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: LGPD/ISO", "SI: Monitoramento de Dados", "SI: Pentests", "SI: Políticas de Segurança", "SI: SOC", "SI: Segurança de Rede", "SI: Softwares de Segurança"], "cats": {"GESTÃO": ["Compliance"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Detecção de Intrusões", "Ferramentas Antifraude", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "LGPD/ISO", "Monitoramento de Dados", "Pentests", "Políticas de Segurança", "SOC", "Segurança de Rede", "Softwares de Segurança"]}, "total": 15}, {"nome": "ATACADAO DIA A DIA", "dores": ["GESTÃO: Compliance", "INFRA: Ativos de rede", "INFRA: Controle de Acesso", "INFRA: Câmeras de Segurança", "INFRA: Fibra Ótica", "INFRA: No-break", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Imutável", "SI: CASB", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Detecção de Intrusões", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: VPN", "SI: WAF"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Ativos de rede", "Controle de Acesso", "Câmeras de Segurança", "Fibra Ótica", "No-break"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Imutável", "CASB", "Conectividade", "Criptografia/PQC", "DLP", "Detecção de Intrusões", "EDR/MDM", "Educação e Treinamento", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "Pentests", "Políticas de Segurança", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "VPN", "WAF"]}, "total": 38}, {"nome": "ATACADO COSTA", "dores": ["GESTÃO: Compliance", "INFRA: Ativos de rede", "INFRA: Cabeamento Estruturado", "INFRA: Cabeamento de Rede", "INFRA: Câmeras de Segurança", "INFRA: Fibra Ótica", "SI: Antivirus", "SI: Appliances de SI", "SI: Detecção de Intrusões"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Ativos de rede", "Cabeamento Estruturado", "Cabeamento de Rede", "Câmeras de Segurança", "Fibra Ótica"], "SI": ["Antivirus", "Appliances de SI", "Detecção de Intrusões"]}, "total": 9}, {"nome": "ATMOSFERA HIGIENIZAÇÃO", "dores": ["SI: Detecção de Intrusões", "SI: Modernização de Dados"], "cats": {"SI": ["Detecção de Intrusões", "Modernização de Dados"]}, "total": 2}, {"nome": "AURORA ALIMENTOS", "dores": ["SI: Análise de Segurança de Dados", "SI: Autenticação 2FA", "SI: Backup em Nuvem", "SI: Conectividade", "SI: DLP", "SI: Educação e Treinamento", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: PAM", "SI: Políticas de Segurança", "SI: Softwares de Segurança"], "cats": {"SI": ["Análise de Segurança de Dados", "Autenticação 2FA", "Backup em Nuvem", "Conectividade", "DLP", "Educação e Treinamento", "LGPD/ISO", "Modernização de Dados", "PAM", "Políticas de Segurança", "Softwares de Segurança"]}, "total": 11}, {"nome": "AZUL LINHAS AEREAS", "dores": ["INFRA: Ativos de rede", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: CASB", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: Pentests", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: VPN"], "cats": {"INFRA": ["Ativos de rede"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Tradicional", "Backup em Nuvem", "CASB", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "Pentests", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "VPN"]}, "total": 31}, {"nome": "BANCO PINE", "dores": ["SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: Modernização de Dados", "SI: Pentests", "SI: Softwares de Segurança", "SI: WAF"], "cats": {"SI": ["Educação e Treinamento", "Ferramentas Antifraude", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "Modernização de Dados", "Pentests", "Softwares de Segurança", "WAF"]}, "total": 8}, {"nome": "BAYER", "dores": ["INFRA: Ativos de rede", "SI: Ferramentas Antifraude", "SI: IAM", "SI: Modernização de Dados"], "cats": {"INFRA": ["Ativos de rede"], "SI": ["Ferramentas Antifraude", "IAM", "Modernização de Dados"]}, "total": 4}, {"nome": "CASAS PERNAMBUCANAS", "dores": ["SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC"], "cats": {"SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Imutável", "Backup Tradicional", "Backup em Nuvem", "Conectividade", "Criptografia/PQC", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "SOC"]}, "total": 29}, {"nome": "CEG (NATURGY)", "dores": ["SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: CASB", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: VPN", "SI: WAF"], "cats": {"SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Imutável", "Backup Tradicional", "Backup em Nuvem", "CASB", "Conectividade", "Criptografia/PQC", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "Pentests", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "VPN", "WAF"]}, "total": 37}, {"nome": "CISER", "dores": ["INFRA: Câmeras de Segurança", "INFRA: Fibra Ótica", "INFRA: No-break", "SI: Criptografia/PQC", "SI: DLP", "SI: Educação e Treinamento", "SI: Firewall em Nuvem", "SI: Políticas de Segurança", "SI: Softwares de Segurança"], "cats": {"INFRA": ["Câmeras de Segurança", "Fibra Ótica", "No-break"], "SI": ["Criptografia/PQC", "DLP", "Educação e Treinamento", "Firewall em Nuvem", "Políticas de Segurança", "Softwares de Segurança"]}, "total": 9}, {"nome": "CLARO", "dores": ["GESTÃO: Compliance", "INFRA: Ativos de rede", "INFRA: Data center físico", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: CASB", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: VPN", "SI: WAF"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Ativos de rede", "Data center físico"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Imutável", "Backup Tradicional", "Backup em Nuvem", "CASB", "Conectividade", "Criptografia/PQC", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "Pentests", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "VPN", "WAF"]}, "total": 40}, {"nome": "COAMO", "dores": ["INFRA: Ativos de rede", "INFRA: Cabeamento de Rede", "INFRA: Cabo Metálico", "INFRA: Controle de Acesso", "INFRA: Câmeras de Segurança", "INFRA: Fibra Ótica", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Detecção de Intrusões", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: PAM", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: WAF"], "cats": {"INFRA": ["Ativos de rede", "Cabeamento de Rede", "Cabo Metálico", "Controle de Acesso", "Câmeras de Segurança", "Fibra Ótica"], "SI": ["Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Detecção de Intrusões", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "Monitoramento de Dados", "Monitoramento de SI", "PAM", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "WAF"]}, "total": 25}, {"nome": "COGNA EDUCAÇÃO", "dores": ["SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Disaster Recovery", "SI: Educação e Treinamento", "SI: Firewall Físico", "SI: Gestão de Incidentes", "SI: IAM", "SI: Modernização de Dados", "SI: Monitoramento de SI", "SI: Softwares de Segurança", "SI: WAF"], "cats": {"SI": ["Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Disaster Recovery", "Educação e Treinamento", "Firewall Físico", "Gestão de Incidentes", "IAM", "Modernização de Dados", "Monitoramento de SI", "Softwares de Segurança", "WAF"]}, "total": 12}, {"nome": "CONTINENTAL AUTOMOTIVA", "dores": ["INFRA: Ativos de rede", "INFRA: No-break", "SI: Detecção de Intrusões", "SI: Educação e Treinamento", "SI: Pentests", "SI: Políticas de Segurança", "SI: SIEM", "SI: SOC"], "cats": {"INFRA": ["Ativos de rede", "No-break"], "SI": ["Detecção de Intrusões", "Educação e Treinamento", "Pentests", "Políticas de Segurança", "SIEM", "SOC"]}, "total": 8}, {"nome": "COOPAVEL", "dores": ["INFRA: Ativos de rede", "INFRA: Cabeamento Estruturado", "INFRA: Cabeamento de Rede", "INFRA: Controle de Acesso", "INFRA: Câmeras de Segurança", "INFRA: Fibra Ótica", "INFRA: No-break", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup em Nuvem", "SI: Conectividade", "SI: DLP", "SI: Detecção de Intrusões", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: Monitoramento de Dados", "SI: PAM", "SI: Pentests", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança"], "cats": {"INFRA": ["Ativos de rede", "Cabeamento Estruturado", "Cabeamento de Rede", "Controle de Acesso", "Câmeras de Segurança", "Fibra Ótica", "No-break"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup em Nuvem", "Conectividade", "DLP", "Detecção de Intrusões", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "Monitoramento de Dados", "PAM", "Pentests", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança"]}, "total": 27}, {"nome": "COOPERATIVA INTEGRADA", "dores": ["INFRA: Ativos de rede", "INFRA: Câmeras de Segurança", "INFRA: Data center físico", "INFRA: No-break", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Backup Tradicional", "SI: CASB", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Disaster Recovery", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: WAF"], "cats": {"INFRA": ["Ativos de rede", "Câmeras de Segurança", "Data center físico", "No-break"], "SI": ["Análise de Segurança de Dados", "Appliances de SI", "Backup Tradicional", "CASB", "Conectividade", "Criptografia/PQC", "DLP", "Disaster Recovery", "Educação e Treinamento", "Ferramentas Antifraude", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "PAM", "Pentests", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "WAF"]}, "total": 29}, {"nome": "COOPERCITRUS", "dores": ["GESTÃO: Compliance", "INFRA: Ativos de rede", "INFRA: Cabeamento Estruturado", "INFRA: Cabeamento de Rede", "INFRA: Câmeras de Segurança", "INFRA: Fibra Ótica", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: CASB", "SI: Conectividade", "SI: DLP", "SI: Detecção de Intrusões", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Políticas de Segurança", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Ativos de rede", "Cabeamento Estruturado", "Cabeamento de Rede", "Câmeras de Segurança", "Fibra Ótica"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Imutável", "Backup Tradicional", "Backup em Nuvem", "CASB", "Conectividade", "DLP", "Detecção de Intrusões", "EDR/MDM", "Educação e Treinamento", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de SI", "NDR", "PAM", "Políticas de Segurança", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança"]}, "total": 35}, {"nome": "COPOBRAS S/A", "dores": ["GESTÃO: Compliance", "INFRA: Ativos de rede", "INFRA: Cabeamento de Rede", "INFRA: Controle de Acesso", "INFRA: Câmeras de Segurança", "INFRA: Fibra Ótica", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: Conectividade", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Pentests", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: VPN", "SI: WAF"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Ativos de rede", "Cabeamento de Rede", "Controle de Acesso", "Câmeras de Segurança", "Fibra Ótica"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Imutável", "Backup Tradicional", "Backup em Nuvem", "Conectividade", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Ferramentas Antifraude", "Firewall Físico", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "Pentests", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "VPN", "WAF"]}, "total": 38}, {"nome": "CURY", "dores": ["INFRA: No-break", "SI: CASB", "SI: Criptografia/PQC", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: LGPD/ISO", "SI: Monitoramento de SI", "SI: NDR", "SI: Pentests", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: VPN", "SI: WAF"], "cats": {"INFRA": ["No-break"], "SI": ["CASB", "Criptografia/PQC", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "LGPD/ISO", "Monitoramento de SI", "NDR", "Pentests", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "VPN", "WAF"]}, "total": 24}, {"nome": "DANNEMANN SIEMSEN BIGLER", "dores": ["INFRA: Câmeras de Segurança", "INFRA: No-break", "SI: Backup Imutável", "SI: Criptografia/PQC", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Políticas de Segurança", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: WAF"], "cats": {"INFRA": ["Câmeras de Segurança", "No-break"], "SI": ["Backup Imutável", "Criptografia/PQC", "Educação e Treinamento", "Ferramentas Antifraude", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "Políticas de Segurança", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "WAF"]}, "total": 21}, {"nome": "DELLA VIA PNEUS LTDA", "dores": ["GESTÃO: Compliance", "INFRA: Controle de Acesso", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: Conectividade", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Monitoramento de Dados", "SI: NDR", "SI: Pentests", "SI: Recuperação de Dados", "SI: SIEM", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: WAF"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Controle de Acesso"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Tradicional", "Backup em Nuvem", "Conectividade", "DLP", "Detecção de Intrusões", "Disaster Recovery", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Monitoramento de Dados", "NDR", "Pentests", "Recuperação de Dados", "SIEM", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "WAF"]}, "total": 29}, {"nome": "DMA", "dores": ["SI: Análise de Segurança de Dados", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: IAM", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: Pentests", "SI: Recuperação de Dados", "SI: SIEM", "SI: Softwares de Segurança"], "cats": {"SI": ["Análise de Segurança de Dados", "Educação e Treinamento", "Ferramentas Antifraude", "IAM", "Monitoramento de Dados", "Monitoramento de SI", "Pentests", "Recuperação de Dados", "SIEM", "Softwares de Segurança"]}, "total": 10}, {"nome": "ELDORADO BRASIL", "dores": [], "cats": {}, "total": 0}, {"nome": "ELECTROLUX", "dores": [], "cats": {}, "total": 0}, {"nome": "ELFA MEDICAMENTOS", "dores": ["INFRA: Câmeras de Segurança", "INFRA: Sala Segura", "SI: DLP", "SI: Educação e Treinamento", "SI: Monitoramento de Dados", "SI: SIEM", "SI: SOC", "SI: Softwares de Segurança"], "cats": {"INFRA": ["Câmeras de Segurança", "Sala Segura"], "SI": ["DLP", "Educação e Treinamento", "Monitoramento de Dados", "SIEM", "SOC", "Softwares de Segurança"]}, "total": 8}, {"nome": "FARMACIA PAGUE MENOS (GRUPO)", "dores": ["INFRA: Cabeamento Estruturado", "INFRA: Cabeamento de Rede", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: Modernização de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: SIEM", "SI: SOC"], "cats": {"INFRA": ["Cabeamento Estruturado", "Cabeamento de Rede"], "SI": ["EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "Modernização de Dados", "Monitoramento de SI", "NDR", "SIEM", "SOC"]}, "total": 13}, {"nome": "FAST SHOP", "dores": ["GESTÃO: Compliance", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Autenticação 2FA", "SI: Backup em Nuvem", "SI: Conectividade", "SI: DLP", "SI: Ferramentas Antifraude", "SI: Modernização de Dados"], "cats": {"GESTÃO": ["Compliance"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Autenticação 2FA", "Backup em Nuvem", "Conectividade", "DLP", "Ferramentas Antifraude", "Modernização de Dados"]}, "total": 9}, {"nome": "FIRIAN", "dores": ["INFRA: Ativos de rede", "INFRA: Cabeamento de Rede", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Backup em Nuvem", "SI: CASB", "SI: Conectividade", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: Modernização de Dados", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: WAF"], "cats": {"INFRA": ["Ativos de rede", "Cabeamento de Rede"], "SI": ["Análise de Segurança de Dados", "Appliances de SI", "Backup em Nuvem", "CASB", "Conectividade", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Gestão de Vulnerabilidades", "IAM", "Modernização de Dados", "PAM", "Pentests", "Políticas de Segurança", "Segurança de Rede", "Softwares de Segurança", "WAF"]}, "total": 21}, {"nome": "FRUKI", "dores": ["INFRA: Ativos de rede", "INFRA: No-break"], "cats": {"INFRA": ["Ativos de rede", "No-break"]}, "total": 2}, {"nome": "FS BIOENERGIA", "dores": ["GESTÃO: Compliance", "INFRA: Ativos de rede", "INFRA: Cabeamento de Rede", "INFRA: Controle de Acesso", "INFRA: Câmeras de Segurança", "INFRA: Data center físico", "INFRA: Fibra Ótica", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: CASB", "SI: Criptografia/PQC", "SI: DLP", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: Pentests", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Ativos de rede", "Cabeamento de Rede", "Controle de Acesso", "Câmeras de Segurança", "Data center físico", "Fibra Ótica"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "CASB", "Criptografia/PQC", "DLP", "EDR/MDM", "Educação e Treinamento", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "Pentests", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede"]}, "total": 30}, {"nome": "FUABC-ORGANIZAÇÃO SOCIAL DE SAÚDE", "dores": ["INFRA: Cabeamento Estruturado", "INFRA: Cabeamento de Rede", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: CASB", "SI: DLP", "SI: Ferramentas Antifraude", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de SI", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Softwares de Segurança", "SI: Track Inteligence", "SI: VPN"], "cats": {"INFRA": ["Cabeamento Estruturado", "Cabeamento de Rede"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Imutável", "Backup Tradicional", "Backup em Nuvem", "CASB", "DLP", "Ferramentas Antifraude", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de SI", "PAM", "Pentests", "Políticas de Segurança", "SIEM", "SOC", "Segurança Aplicativos", "Softwares de Segurança", "Track Inteligence", "VPN"]}, "total": 27}, {"nome": "GRUPO J. MALUCELLI", "dores": ["INFRA: Controle de Acesso", "INFRA: Câmeras de Segurança", "SI: Análise de Segurança de Dados", "SI: Backup em Nuvem", "SI: CASB", "SI: DLP", "SI: IAM", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: PAM", "SI: Políticas de Segurança", "SI: SIEM", "SI: SOC", "SI: Softwares de Segurança"], "cats": {"INFRA": ["Controle de Acesso", "Câmeras de Segurança"], "SI": ["Análise de Segurança de Dados", "Backup em Nuvem", "CASB", "DLP", "IAM", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "PAM", "Políticas de Segurança", "SIEM", "SOC", "Softwares de Segurança"]}, "total": 15}, {"nome": "GRUPO ARGENTA", "dores": ["GESTÃO: Compliance", "INFRA: Ativos de rede", "INFRA: Cabeamento Estruturado", "INFRA: Cabeamento de Rede", "INFRA: Controle de Acesso", "INFRA: No-break", "SI: Análise de Segurança de Dados", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Conectividade", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança de Rede"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Ativos de rede", "Cabeamento Estruturado", "Cabeamento de Rede", "Controle de Acesso", "No-break"], "SI": ["Análise de Segurança de Dados", "Backup Imutável", "Backup Tradicional", "Conectividade", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "PAM", "Pentests", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "SOC", "Segurança de Rede"]}, "total": 27}, {"nome": "GRUPO MARQUISE", "dores": ["GESTÃO: Compliance", "INFRA: Fibra Ótica", "SI: Análise de Segurança de Dados", "SI: CASB", "SI: DLP", "SI: Educação e Treinamento", "SI: NDR", "SI: PAM"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Fibra Ótica"], "SI": ["Análise de Segurança de Dados", "CASB", "DLP", "Educação e Treinamento", "NDR", "PAM"]}, "total": 8}, {"nome": "GRUPO MOSAIC", "dores": ["GESTÃO: Compliance", "INFRA: Ativos de rede", "INFRA: Sala Segura", "SI: Análise de Segurança de Dados", "SI: CASB", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Vulnerabilidades", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Track Inteligence", "SI: VPN", "SI: WAF"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Ativos de rede", "Sala Segura"], "SI": ["Análise de Segurança de Dados", "CASB", "Conectividade", "Criptografia/PQC", "DLP", "Detecção de Intrusões", "Disaster Recovery", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Vulnerabilidades", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "Pentests", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "Segurança Aplicativos", "Segurança de Rede", "Track Inteligence", "VPN", "WAF"]}, "total": 30}, {"nome": "GRUPO OXXO", "dores": ["SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: CASB", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: Track Inteligence", "SI: VPN", "SI: WAF"], "cats": {"SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Imutável", "Backup Tradicional", "Backup em Nuvem", "CASB", "Conectividade", "Criptografia/PQC", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "Pentests", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "Track Inteligence", "VPN", "WAF"]}, "total": 38}, {"nome": "GRUPO SC", "dores": ["GESTÃO: Compliance", "SI: Análise de Segurança de Dados", "SI: Detecção de Intrusões", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: Monitoramento de Dados", "SI: PAM", "SI: Políticas de Segurança", "SI: Softwares de Segurança", "SI: Track Inteligence", "SI: WAF"], "cats": {"GESTÃO": ["Compliance"], "SI": ["Análise de Segurança de Dados", "Detecção de Intrusões", "Gestão de Vulnerabilidades", "IAM", "Monitoramento de Dados", "PAM", "Políticas de Segurança", "Softwares de Segurança", "Track Inteligence", "WAF"]}, "total": 11}, {"nome": "GRUPO SER EDUCACIONAL", "dores": ["INFRA: Controle de Acesso", "SI: DLP", "SI: Disaster Recovery", "SI: Gestão de Vulnerabilidades", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: Políticas de Segurança", "SI: SOC", "SI: Softwares de Segurança"], "cats": {"INFRA": ["Controle de Acesso"], "SI": ["DLP", "Disaster Recovery", "Gestão de Vulnerabilidades", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "Políticas de Segurança", "SOC", "Softwares de Segurança"]}, "total": 11}, {"nome": "GRUPO SKALA", "dores": ["INFRA: Ativos de rede", "INFRA: Controle de Acesso", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: Conectividade", "SI: Detecção de Intrusões", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: Pentests", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: VPN"], "cats": {"INFRA": ["Ativos de rede", "Controle de Acesso"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Tradicional", "Backup em Nuvem", "Conectividade", "Detecção de Intrusões", "EDR/MDM", "Educação e Treinamento", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "Pentests", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "VPN"]}, "total": 26}, {"nome": "GRUPO TRES CORAÇÕES", "dores": ["INFRA: Ativos de rede", "INFRA: Cabeamento de Rede", "SI: Appliances de SI", "SI: Backup em Nuvem", "SI: Pentests"], "cats": {"INFRA": ["Ativos de rede", "Cabeamento de Rede"], "SI": ["Appliances de SI", "Backup em Nuvem", "Pentests"]}, "total": 5}, {"nome": "GRUPO ULTRA-BRASIL", "dores": ["INFRA: Ativos de rede", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: CASB", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: Track Inteligence", "SI: VPN", "SI: WAF"], "cats": {"INFRA": ["Ativos de rede"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Imutável", "Backup Tradicional", "Backup em Nuvem", "CASB", "Conectividade", "Criptografia/PQC", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "Pentests", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "Track Inteligence", "VPN", "WAF"]}, "total": 39}, {"nome": "GSH CORP", "dores": ["GESTÃO: Compliance", "INFRA: Controle de Acesso", "INFRA: Câmeras de Segurança", "INFRA: No-break", "SI: DLP", "SI: NDR"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Controle de Acesso", "Câmeras de Segurança", "No-break"], "SI": ["DLP", "NDR"]}, "total": 6}, {"nome": "HINODE", "dores": ["SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: CASB", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: Track Inteligence", "SI: VPN", "SI: WAF"], "cats": {"SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Imutável", "Backup Tradicional", "Backup em Nuvem", "CASB", "Conectividade", "Criptografia/PQC", "DLP", "Detecção de Intrusões", "Disaster Recovery", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "Pentests", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "Track Inteligence", "VPN", "WAF"]}, "total": 37}, {"nome": "IBRAME LAMINACAO", "dores": ["INFRA: Controle de Acesso", "INFRA: No-break"], "cats": {"INFRA": ["Controle de Acesso", "No-break"]}, "total": 2}, {"nome": "INBRANDS", "dores": ["SI: EDR/MDM", "SI: Modernização de Dados", "SI: PAM", "SI: SIEM"], "cats": {"SI": ["EDR/MDM", "Modernização de Dados", "PAM", "SIEM"]}, "total": 4}, {"nome": "J. MACEDO", "dores": ["GESTÃO: Compliance", "INFRA: Controle de Acesso", "SI: Antivirus", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Conectividade", "SI: DLP", "SI: Detecção de Intrusões", "SI: Educação e Treinamento", "SI: Gestão de Incidentes", "SI: Softwares de Segurança"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Controle de Acesso"], "SI": ["Antivirus", "Appliances de SI", "Autenticação 2FA", "Conectividade", "DLP", "Detecção de Intrusões", "Educação e Treinamento", "Gestão de Incidentes", "Softwares de Segurança"]}, "total": 11}, {"nome": "LARCO PETROLEO", "dores": ["INFRA: Ativos de rede", "INFRA: Cabeamento Estruturado", "INFRA: Cabeamento de Rede", "INFRA: Controle de Acesso", "INFRA: Câmeras de Segurança", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança"], "cats": {"INFRA": ["Ativos de rede", "Cabeamento Estruturado", "Cabeamento de Rede", "Controle de Acesso", "Câmeras de Segurança"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Conectividade", "Criptografia/PQC", "DLP", "Detecção de Intrusões", "Disaster Recovery", "Educação e Treinamento", "Ferramentas Antifraude", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança"]}, "total": 26}, {"nome": "LIBRELATO", "dores": ["SI: Backup Tradicional", "SI: Disaster Recovery", "SI: Firewall Físico", "SI: Softwares de Segurança"], "cats": {"SI": ["Backup Tradicional", "Disaster Recovery", "Firewall Físico", "Softwares de Segurança"]}, "total": 4}, {"nome": "LINDT & SPRUNGLI", "dores": ["INFRA: Ativos de rede", "INFRA: Câmeras de Segurança", "SI: Conectividade", "SI: Detecção de Intrusões", "SI: Firewall Físico", "SI: Modernização de Dados"], "cats": {"INFRA": ["Ativos de rede", "Câmeras de Segurança"], "SI": ["Conectividade", "Detecção de Intrusões", "Firewall Físico", "Modernização de Dados"]}, "total": 6}, {"nome": "LOREAL", "dores": ["SI: Softwares de Segurança", "SI: Track Inteligence"], "cats": {"SI": ["Softwares de Segurança", "Track Inteligence"]}, "total": 2}, {"nome": "M. DIAS BRANCO", "dores": ["GESTÃO: Compliance", "INFRA: Controle de Acesso", "INFRA: Câmeras de Segurança", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: CASB", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: Track Inteligence", "SI: VPN", "SI: WAF"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Controle de Acesso", "Câmeras de Segurança"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Imutável", "Backup Tradicional", "Backup em Nuvem", "CASB", "Conectividade", "Criptografia/PQC", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "Pentests", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "Track Inteligence", "VPN", "WAF"]}, "total": 41}, {"nome": "MACEDO", "dores": ["SI: LGPD/ISO"], "cats": {"SI": ["LGPD/ISO"]}, "total": 1}, {"nome": "MACKENZIE", "dores": ["INFRA: Ativos de rede", "INFRA: Controle de Acesso", "INFRA: Câmeras de Segurança", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Tradicional", "SI: Conectividade", "SI: DLP", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Firewall Físico", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: Segurança de Rede", "SI: Softwares de Segurança"], "cats": {"INFRA": ["Ativos de rede", "Controle de Acesso", "Câmeras de Segurança"], "SI": ["Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Tradicional", "Conectividade", "DLP", "EDR/MDM", "Educação e Treinamento", "Firewall Físico", "Monitoramento de SI", "NDR", "PAM", "Pentests", "Políticas de Segurança", "Segurança de Rede", "Softwares de Segurança"]}, "total": 19}, {"nome": "MARTIN-BROWER", "dores": ["GESTÃO: Compliance", "INFRA: Ativos de rede", "INFRA: Controle de Acesso", "INFRA: Câmeras de Segurança", "INFRA: Data center físico", "SI: Track Inteligence"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Ativos de rede", "Controle de Acesso", "Câmeras de Segurança", "Data center físico"], "SI": ["Track Inteligence"]}, "total": 6}, {"nome": "MK ELETRODOMÉSTICOS", "dores": ["INFRA: Cabeamento de Rede", "INFRA: Fibra Ótica"], "cats": {"INFRA": ["Cabeamento de Rede", "Fibra Ótica"]}, "total": 2}, {"nome": "MUNDIAL MIX", "dores": ["INFRA: Cabeamento Estruturado", "INFRA: Controle de Acesso", "INFRA: Câmeras de Segurança", "INFRA: Sala Cofre", "SI: Análise de Segurança de Dados", "SI: Backup Tradicional", "SI: Conectividade", "SI: DLP", "SI: Detecção de Intrusões", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: Modernização de Dados", "SI: Pentests", "SI: Políticas de Segurança", "SI: SOC", "SI: Softwares de Segurança"], "cats": {"INFRA": ["Cabeamento Estruturado", "Controle de Acesso", "Câmeras de Segurança", "Sala Cofre"], "SI": ["Análise de Segurança de Dados", "Backup Tradicional", "Conectividade", "DLP", "Detecção de Intrusões", "Educação e Treinamento", "Ferramentas Antifraude", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "Modernização de Dados", "Pentests", "Políticas de Segurança", "SOC", "Softwares de Segurança"]}, "total": 18}, {"nome": "NEUGEBAUER", "dores": ["INFRA: Cabeamento Estruturado", "INFRA: Cabeamento de Rede", "INFRA: Câmeras de Segurança", "INFRA: Fibra Ótica"], "cats": {"INFRA": ["Cabeamento Estruturado", "Cabeamento de Rede", "Câmeras de Segurança", "Fibra Ótica"]}, "total": 4}, {"nome": "NOVELIS", "dores": ["INFRA: Ativos de rede", "INFRA: Cabeamento de Rede", "INFRA: Câmeras de Segurança", "SI: Appliances de SI", "SI: Disaster Recovery", "SI: Firewall Físico"], "cats": {"INFRA": ["Ativos de rede", "Cabeamento de Rede", "Câmeras de Segurança"], "SI": ["Appliances de SI", "Disaster Recovery", "Firewall Físico"]}, "total": 6}, {"nome": "ODONTOPREV", "dores": ["GESTÃO: Compliance", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: CASB", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: PAM", "SI: Pentests", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: Track Inteligence", "SI: VPN", "SI: WAF"], "cats": {"GESTÃO": ["Compliance"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Tradicional", "Backup em Nuvem", "CASB", "Conectividade", "Criptografia/PQC", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "PAM", "Pentests", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "Track Inteligence", "VPN", "WAF"]}, "total": 36}, {"nome": "PATRIA INVESTIMENTOS", "dores": ["SI: Análise de Segurança de Dados", "SI: Detecção de Intrusões", "SI: Pentests", "SI: Track Inteligence", "SI: WAF"], "cats": {"SI": ["Análise de Segurança de Dados", "Detecção de Intrusões", "Pentests", "Track Inteligence", "WAF"]}, "total": 5}, {"nome": "PATRUS TRANSPORTES", "dores": ["GESTÃO: Compliance", "INFRA: Ativos de rede", "INFRA: Cabeamento de Rede", "INFRA: Controle de Acesso", "INFRA: Câmeras de Segurança", "SI: Educação e Treinamento", "SI: Modernização de Dados", "SI: Políticas de Segurança", "SI: Track Inteligence"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Ativos de rede", "Cabeamento de Rede", "Controle de Acesso", "Câmeras de Segurança"], "SI": ["Educação e Treinamento", "Modernização de Dados", "Políticas de Segurança", "Track Inteligence"]}, "total": 9}, {"nome": "PIF PAF", "dores": ["SI: Antivirus", "SI: Análise de Segurança de Dados"], "cats": {"SI": ["Antivirus", "Análise de Segurança de Dados"]}, "total": 2}, {"nome": "POSITIVO TECNOLOGIA", "dores": ["GESTÃO: Compliance", "INFRA: Data center físico", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Pentests", "SI: Políticas de Segurança", "SI: SOC", "SI: Softwares de Segurança"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Data center físico"], "SI": ["Disaster Recovery", "EDR/MDM", "LGPD/ISO", "Modernização de Dados", "Pentests", "Políticas de Segurança", "SOC", "Softwares de Segurança"]}, "total": 10}, {"nome": "PROFARMA", "dores": ["INFRA: Ativos de rede", "INFRA: Cabeamento de Rede", "INFRA: Cabo Metálico", "INFRA: Fibra Ótica", "SI: Análise de Segurança de Dados", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: EDR/MDM", "SI: Gestão de Vulnerabilidades", "SI: NDR", "SI: PAM", "SI: Políticas de Segurança", "SI: SIEM", "SI: Segurança de Rede"], "cats": {"INFRA": ["Ativos de rede", "Cabeamento de Rede", "Cabo Metálico", "Fibra Ótica"], "SI": ["Análise de Segurança de Dados", "Conectividade", "Criptografia/PQC", "DLP", "EDR/MDM", "Gestão de Vulnerabilidades", "NDR", "PAM", "Políticas de Segurança", "SIEM", "Segurança de Rede"]}, "total": 15}, {"nome": "REDE GLOBO", "dores": ["SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: CASB", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: Track Inteligence", "SI: VPN", "SI: WAF"], "cats": {"SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Imutável", "Backup Tradicional", "Backup em Nuvem", "CASB", "Conectividade", "Criptografia/PQC", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "Pentests", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "Track Inteligence", "VPN", "WAF"]}, "total": 38}, {"nome": "RENAULT", "dores": ["GESTÃO: Compliance", "INFRA: Ativos de rede", "INFRA: Data center físico", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: CASB", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: Track Inteligence", "SI: VPN", "SI: WAF"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Ativos de rede", "Data center físico"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Imutável", "Backup Tradicional", "Backup em Nuvem", "CASB", "Conectividade", "Criptografia/PQC", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "Pentests", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "Track Inteligence", "VPN", "WAF"]}, "total": 41}, {"nome": "ROCHE", "dores": ["GESTÃO: Compliance", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: CASB", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: Track Inteligence", "SI: VPN", "SI: WAF"], "cats": {"GESTÃO": ["Compliance"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Imutável", "Backup Tradicional", "Backup em Nuvem", "CASB", "Conectividade", "Criptografia/PQC", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "Pentests", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "Track Inteligence", "VPN", "WAF"]}, "total": 39}, {"nome": "SAGA BRASIL", "dores": ["GESTÃO: Compliance", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: CASB", "SI: Conectividade", "SI: Detecção de Intrusões", "SI: Educação e Treinamento", "SI: IAM", "SI: Modernização de Dados", "SI: Monitoramento de SI", "SI: PAM", "SI: Políticas de Segurança", "SI: SIEM", "SI: Segurança de Rede"], "cats": {"GESTÃO": ["Compliance"], "SI": ["Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "CASB", "Conectividade", "Detecção de Intrusões", "Educação e Treinamento", "IAM", "Modernização de Dados", "Monitoramento de SI", "PAM", "Políticas de Segurança", "SIEM", "Segurança de Rede"]}, "total": 15}, {"nome": "SAP", "dores": ["INFRA: Ativos de rede", "INFRA: Cabeamento Estruturado", "INFRA: Cabo Metálico", "INFRA: Fibra Ótica", "INFRA: No-break", "INFRA: Sala Segura", "SI: Educação e Treinamento"], "cats": {"INFRA": ["Ativos de rede", "Cabeamento Estruturado", "Cabo Metálico", "Fibra Ótica", "No-break", "Sala Segura"], "SI": ["Educação e Treinamento"]}, "total": 7}, {"nome": "SEPHORA", "dores": ["INFRA: Cabeamento Estruturado", "INFRA: Câmeras de Segurança", "INFRA: No-break", "SI: Análise de Segurança de Dados", "SI: Educação e Treinamento"], "cats": {"INFRA": ["Cabeamento Estruturado", "Câmeras de Segurança", "No-break"], "SI": ["Análise de Segurança de Dados", "Educação e Treinamento"]}, "total": 5}, {"nome": "SLC AGRICOLA", "dores": ["SI: Educação e Treinamento", "SI: IAM", "SI: Softwares de Segurança"], "cats": {"SI": ["Educação e Treinamento", "IAM", "Softwares de Segurança"]}, "total": 3}, {"nome": "STUDIO Z", "dores": ["INFRA: Ativos de rede", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Pentests", "SI: Políticas de Segurança", "SI: Softwares de Segurança"], "cats": {"INFRA": ["Ativos de rede"], "SI": ["Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "LGPD/ISO", "Modernização de Dados", "Pentests", "Políticas de Segurança", "Softwares de Segurança"]}, "total": 10}, {"nome": "SUPERATACADO NOVA ERA", "dores": ["GESTÃO: Compliance", "INFRA: Ativos de rede", "INFRA: Controle de Acesso", "INFRA: Câmeras de Segurança", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Conectividade", "SI: Detecção de Intrusões", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: PAM", "SI: Pentests", "SI: SIEM"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Ativos de rede", "Controle de Acesso", "Câmeras de Segurança"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Conectividade", "Detecção de Intrusões", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "Modernização de Dados", "Monitoramento de Dados", "PAM", "Pentests", "SIEM"]}, "total": 22}, {"nome": "SUPERMERCADO CONDOR", "dores": ["GESTÃO: Compliance", "INFRA: Ativos de rede", "INFRA: Câmeras de Segurança", "INFRA: Data center físico", "SI: Appliances de SI", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: NDR", "SI: Pentests", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Track Inteligence", "SI: VPN", "SI: WAF"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Ativos de rede", "Câmeras de Segurança", "Data center físico"], "SI": ["Appliances de SI", "Backup Imutável", "Backup Tradicional", "Backup em Nuvem", "Conectividade", "Criptografia/PQC", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Firewall Físico", "Firewall em Nuvem", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "NDR", "Pentests", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Track Inteligence", "VPN", "WAF"]}, "total": 30}, {"nome": "SUPERMIX", "dores": ["INFRA: Cabeamento de Rede", "INFRA: No-break", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: Modernização de Dados"], "cats": {"INFRA": ["Cabeamento de Rede", "No-break"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "Modernização de Dados"]}, "total": 13}, {"nome": "SYLVAMO", "dores": ["GESTÃO: Compliance", "INFRA: Cabeamento Estruturado", "INFRA: Câmeras de Segurança", "INFRA: Data center físico", "INFRA: Fibra Ótica", "INFRA: No-break", "SI: Appliances de SI", "SI: Backup Imutável", "SI: Backup em Nuvem", "SI: CASB", "SI: Conectividade", "SI: Detecção de Intrusões", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: Pentests", "SI: Políticas de Segurança", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: Track Inteligence", "SI: VPN", "SI: WAF"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Cabeamento Estruturado", "Câmeras de Segurança", "Data center físico", "Fibra Ótica", "No-break"], "SI": ["Appliances de SI", "Backup Imutável", "Backup em Nuvem", "CASB", "Conectividade", "Detecção de Intrusões", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "Pentests", "Políticas de Segurança", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "Track Inteligence", "VPN", "WAF"]}, "total": 33}, {"nome": "SÃO JOÃO FARMACIAS", "dores": ["INFRA: Ativos de rede", "INFRA: Cabeamento Estruturado", "SI: Conectividade", "SI: Disaster Recovery", "SI: Firewall Físico", "SI: IAM"], "cats": {"INFRA": ["Ativos de rede", "Cabeamento Estruturado"], "SI": ["Conectividade", "Disaster Recovery", "Firewall Físico", "IAM"]}, "total": 6}, {"nome": "SÃO SALVADOR ALIMENTOS SSA", "dores": ["INFRA: Ativos de rede", "INFRA: Cabeamento de Rede", "INFRA: Controle de Acesso", "INFRA: Câmeras de Segurança", "INFRA: Fibra Ótica", "INFRA: No-break", "INFRA: Sala Segura", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Tradicional", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: Educação e Treinamento", "SI: Firewall Físico", "SI: Segurança de Rede"], "cats": {"INFRA": ["Ativos de rede", "Cabeamento de Rede", "Controle de Acesso", "Câmeras de Segurança", "Fibra Ótica", "No-break", "Sala Segura"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Tradicional", "DLP", "Detecção de Intrusões", "Disaster Recovery", "Educação e Treinamento", "Firewall Físico", "Segurança de Rede"]}, "total": 18}, {"nome": "TENDA ATACADO", "dores": ["GESTÃO: Compliance", "INFRA: Câmeras de Segurança", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: CASB", "SI: Conectividade", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Pentests", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: Track Inteligence", "SI: WAF"], "cats": {"GESTÃO": ["Compliance"], "INFRA": ["Câmeras de Segurança"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Imutável", "Backup Tradicional", "Backup em Nuvem", "CASB", "Conectividade", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "Pentests", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "Track Inteligence", "WAF"]}, "total": 35}, {"nome": "TITAN PNEUS", "dores": ["SI: Backup Imutável", "SI: Backup em Nuvem"], "cats": {"SI": ["Backup Imutável", "Backup em Nuvem"]}, "total": 2}, {"nome": "TK ELEVADORES", "dores": ["INFRA: Ativos de rede", "SI: Appliances de SI", "SI: Backup em Nuvem", "SI: EDR/MDM", "SI: Gestão de Vulnerabilidades", "SI: PAM", "SI: Softwares de Segurança"], "cats": {"INFRA": ["Ativos de rede"], "SI": ["Appliances de SI", "Backup em Nuvem", "EDR/MDM", "Gestão de Vulnerabilidades", "PAM", "Softwares de Segurança"]}, "total": 7}, {"nome": "TOKIO MARINE", "dores": [], "cats": {}, "total": 0}, {"nome": "TT WORK", "dores": ["GESTÃO: Compliance", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: CASB", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: Track Inteligence", "SI: VPN", "SI: WAF"], "cats": {"GESTÃO": ["Compliance"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Imutável", "Backup Tradicional", "Backup em Nuvem", "CASB", "Conectividade", "Criptografia/PQC", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "Pentests", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "Track Inteligence", "VPN", "WAF"]}, "total": 39}, {"nome": "VALECARD", "dores": ["SI: Antivirus", "SI: CASB", "SI: DLP", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: LGPD/ISO", "SI: Monitoramento de SI", "SI: Pentests", "SI: SIEM", "SI: Segurança Aplicativos"], "cats": {"SI": ["Antivirus", "CASB", "DLP", "Educação e Treinamento", "Ferramentas Antifraude", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "LGPD/ISO", "Monitoramento de SI", "Pentests", "SIEM", "Segurança Aplicativos"]}, "total": 12}, {"nome": "VIPAL", "dores": ["INFRA: Ativos de rede", "INFRA: Cabeamento Estruturado", "INFRA: Cabeamento de Rede", "INFRA: Cabo Metálico", "INFRA: Fibra Ótica", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup em Nuvem", "SI: Disaster Recovery", "SI: Educação e Treinamento", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: Modernização de Dados", "SI: PAM", "SI: SIEM", "SI: Softwares de Segurança"], "cats": {"INFRA": ["Ativos de rede", "Cabeamento Estruturado", "Cabeamento de Rede", "Cabo Metálico", "Fibra Ótica"], "SI": ["Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup em Nuvem", "Disaster Recovery", "Educação e Treinamento", "Gestão de Vulnerabilidades", "IAM", "Modernização de Dados", "PAM", "SIEM", "Softwares de Segurança"]}, "total": 17}, {"nome": "VOLKSWAGEN FINANCIAL SERVICER", "dores": ["GESTÃO: Compliance", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Autenticação 2FA", "SI: Backup Imutável", "SI: Backup Tradicional", "SI: Backup em Nuvem", "SI: CASB", "SI: Conectividade", "SI: Criptografia/PQC", "SI: DLP", "SI: Detecção de Intrusões", "SI: Disaster Recovery", "SI: EDR/MDM", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: LGPD/ISO", "SI: Modernização de Dados", "SI: Monitoramento de Dados", "SI: Monitoramento de SI", "SI: NDR", "SI: PAM", "SI: Pentests", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança Aplicativos", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: Track Inteligence", "SI: VPN", "SI: WAF"], "cats": {"GESTÃO": ["Compliance"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Autenticação 2FA", "Backup Imutável", "Backup Tradicional", "Backup em Nuvem", "CASB", "Conectividade", "Criptografia/PQC", "DLP", "Detecção de Intrusões", "Disaster Recovery", "EDR/MDM", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "LGPD/ISO", "Modernização de Dados", "Monitoramento de Dados", "Monitoramento de SI", "NDR", "PAM", "Pentests", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "SOC", "Segurança Aplicativos", "Segurança de Rede", "Softwares de Segurança", "Track Inteligence", "VPN", "WAF"]}, "total": 39}, {"nome": "ZEMAX LOG", "dores": ["INFRA: Ativos de rede", "INFRA: Cabeamento de Rede", "INFRA: Controle de Acesso", "INFRA: Câmeras de Segurança", "INFRA: No-break", "SI: Antivirus", "SI: Análise de Segurança de Dados", "SI: Appliances de SI", "SI: Backup Imutável", "SI: DLP", "SI: Educação e Treinamento", "SI: Ferramentas Antifraude", "SI: Firewall Físico", "SI: Firewall em Nuvem", "SI: Gestão de Incidentes", "SI: Gestão de Vulnerabilidades", "SI: IAM", "SI: Monitoramento de Dados", "SI: PAM", "SI: Políticas de Segurança", "SI: Recuperação de Dados", "SI: SIEM", "SI: SOC", "SI: Segurança de Rede", "SI: Softwares de Segurança", "SI: Track Inteligence", "SI: VPN", "SI: WAF"], "cats": {"INFRA": ["Ativos de rede", "Cabeamento de Rede", "Controle de Acesso", "Câmeras de Segurança", "No-break"], "SI": ["Antivirus", "Análise de Segurança de Dados", "Appliances de SI", "Backup Imutável", "DLP", "Educação e Treinamento", "Ferramentas Antifraude", "Firewall Físico", "Firewall em Nuvem", "Gestão de Incidentes", "Gestão de Vulnerabilidades", "IAM", "Monitoramento de Dados", "PAM", "Políticas de Segurança", "Recuperação de Dados", "SIEM", "SOC", "Segurança de Rede", "Softwares de Segurança", "Track Inteligence", "VPN", "WAF"]}, "total": 28}], "horarios": [{"data": "18/03/2026", "dia": "Quarta", "horario": "19h30 - 20h30", "local": "Network Point - estande Tripla", "obs": "Happy hour, teremos uma choppeira no estande. O chopp é do tipo Red Ale de uma cervejaria do sul chamada Kairos, premiado nacionalmente. Também teremos cachaça Havana, edição especial de 80 anos."}, {"data": "19/03/2026", "dia": "Quinta", "horario": "10h50 - 11h40", "local": "Network Point - estande Tripla", "obs": "Será no coffebreak das atividades"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "13h30 - 14h00", "local": "Network Point - estande Tripla", "obs": "Café após o almoço, antes do retorno para as atividades"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "15h20 - 16h10", "local": "Network Point - estande Tripla", "obs": "Será no coffebreak das atividades"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "17h55 - 18h55", "local": "Network Point - estande Tripla", "obs": "Happy hour - não teremos chopp, mas terá a cachaça Havana"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "09h55 - 10h40", "local": "Network Point - estande Tripla", "obs": "Será no coffebreak das atividades"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "13h00 - 13h30", "local": "Network Point - estande Tripla", "obs": "Café após o almoço, antes do retorno para as atividades"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "15h25 - 16h15", "local": "Network Point - estande Tripla", "obs": "Será no coffebreak das atividades"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "18h00 - 19h00", "local": "Network Point - estande Tripla", "obs": "Happy hour, teremos uma choppeira no estande. O chopp é do tipo Red Ale de uma cervejaria do sul chamada Kairos, premiado nacionalmente. Também teremos cachaça Havana, edição especial de 80 anos."}]};
+
+// ── BUILD DORES FILTER ──
+const allDores = new Set();
+DATA.empresas.forEach(e => e.dores.forEach(d => allDores.add(d)));
+const dorSelect = document.getElementById('filter-dor');
+[...allDores].sort().forEach(d => {
+  const opt = document.createElement('option');
+  opt.value = d;
+  opt.textContent = d;
+  dorSelect.appendChild(opt);
+});
+
+// ── RENDER EMPRESAS ──
+function renderEmpresas(list) {
+  const grid = document.getElementById('companies-grid');
+  const empty = document.getElementById('empty-state');
+  grid.innerHTML = '';
+  if (!list.length) {
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  list.forEach((emp, idx) => {
+    const initial = emp.nome[0].toUpperCase();
+    const countClass = emp.total > 30 ? 'very-high' : emp.total > 15 ? 'high' : '';
+    const previewTags = emp.dores.slice(0, 4).map(d => {
+      const cat = d.split(':')[0].trim().toLowerCase();
+      return `<span class="tag ${cat}">${d}</span>`;
+    }).join('') + (emp.dores.length > 4 ? `<span class="tag si">+${emp.dores.length - 4} mais</span>` : '');
+
+    let expandedHTML = '';
+    if (emp.total === 0) {
+      expandedHTML = '<div class="no-dores">Sem dores mapeadas na pesquisa.</div>';
+    } else {
+      for (const [cat, items] of Object.entries(emp.cats)) {
+        const tagClass = cat.toLowerCase();
+        const tagsHTML = items.map(i => `<span class="tag ${tagClass}">${i}</span>`).join('');
+        expandedHTML += `<div class="cat-block"><div class="cat-label">${cat}</div><div class="dores-preview">${tagsHTML}</div></div>`;
+      }
+    }
+
+    const card = document.createElement('div');
+    card.className = 'company-card';
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="company-avatar">${initial}</div>
+        <div class="company-name-wrap">
+          <div class="company-name">${emp.nome}</div>
+          <div class="company-dore-count ${countClass}">${emp.total} dore${emp.total !== 1 ? 's' : ''} mapeada${emp.total !== 1 ? 's' : ''}</div>
+        </div>
+        <div class="expand-icon">▾</div>
+      </div>
+      <div class="dores-preview">${previewTags}</div>
+      <div class="dores-expanded">${expandedHTML}</div>
+    `;
+    card.addEventListener('click', () => card.classList.toggle('expanded'));
+    grid.appendChild(card);
+  });
+}
+
+function filterEmpresas() {
+  const q = document.getElementById('search-empresa').value.toLowerCase().trim();
+  const cat = document.getElementById('filter-cat').value;
+  const dor = document.getElementById('filter-dor').value;
+
+  const filtered = DATA.empresas.filter(e => {
+    if (q && !e.nome.toLowerCase().includes(q)) return false;
+    if (cat && !Object.keys(e.cats).includes(cat)) return false;
+    if (dor && !e.dores.includes(dor)) return false;
+    return true;
+  });
+
+  document.getElementById('count-visible').textContent = filtered.length;
+  renderEmpresas(filtered);
+}
+
+// ── RENDER HORARIOS ──
+function renderHorarios() {
+  const container = document.getElementById('horarios-container');
+  const byDate = {};
+  DATA.horarios.forEach(h => {
+    if (!byDate[h.data]) byDate[h.data] = { dia: h.dia, slots: [] };
+    byDate[h.data].slots.push(h);
+  });
+
+  for (const [data, info] of Object.entries(byDate)) {
+    const [dd, mm] = data.split('/');
+    const slotsHTML = info.slots.map(s => {
+      const isHappy = s.obs.toLowerCase().includes('happy');
+      const isCafe = s.obs.toLowerCase().includes('café') || s.obs.toLowerCase().includes('cafe') || s.obs.toLowerCase().includes('coffee');
+      let badge = '';
+      if (isHappy) badge = `<span class="slot-badge happy">🍺 Happy Hour</span>`;
+      else if (isCafe) badge = `<span class="slot-badge coffee">☕ Coffee Break</span>`;
+      const times = s.horario.split(' - ');
+      return `
+        <div class="slot-card ${isHappy ? 'happy-hour' : ''}">
+          <div class="slot-time-block">
+            <div class="slot-time">${times[0] || s.horario}</div>
+            ${times[1] ? `<div class="slot-time-end">até ${times[1]}</div>` : ''}
+          </div>
+          <div class="slot-info">
+            <div class="slot-local">📍 ${s.local}</div>
+            <div class="slot-obs">${s.obs}</div>
+            ${badge}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    container.innerHTML += `
+      <div class="day-group">
+        <div class="day-label">
+          <div class="day-circle">
+            <div class="day-num">${dd}</div>
+            <div class="day-month">MAR</div>
+          </div>
+          <div>
+            <div class="day-title">${info.dia}-feira</div>
+            <div class="day-sub">${data}</div>
+          </div>
+        </div>
+        <div class="slot-list">${slotsHTML}</div>
+      </div>
+    `;
+  }
+}
+
+// ── TAB SWITCH ──
+function switchTab(tab) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + tab).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+
+const REUNIOES = [{"data": "19/03/2026", "dia": "Quinta", "horario": "16:20 - 16:40", "empresa": "MUNDIAL MIX", "executivo": "Alexandre Angelo Lischka"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:20 - 16:40", "empresa": "CASAS PERNAMBUCANAS", "executivo": "Alexandre Bastos Borges"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:20 - 16:40", "empresa": "VAMOS LOCAÇÃO", "executivo": "André Leal"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:20 - 16:40", "empresa": "RENAULT", "executivo": "Caio Tristão Nogueira"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:20 - 16:40", "empresa": "CONSTRUTORA PATRIANI", "executivo": "Carlos Alexandre Spindola Nascimento"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:20 - 16:40", "empresa": "CISER", "executivo": "Elvise Bresciani"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:20 - 16:40", "empresa": "ZAMP", "executivo": "Fernanda Toscano"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:20 - 16:40", "empresa": "ROCHE", "executivo": "Hamilton Nogueira"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:20 - 16:40", "empresa": "MART MINAS", "executivo": "Helton Lima"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:20 - 16:40", "empresa": "SEPHORA", "executivo": "Jackson Carvalho de Andrade Filho"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:20 - 16:40", "empresa": "COTRIJAL", "executivo": "Luiz Felipe Moraes Lopes"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:20 - 16:40", "empresa": "MOTZ TRANSPORTES", "executivo": "Marcelo Boratino Ortega"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:20 - 16:40", "empresa": "COOPERCITRUS", "executivo": "Nailson Rego"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:20 - 16:40", "empresa": "NEUGEBAUER", "executivo": "Norton Soares Domingues"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:20 - 16:40", "empresa": "BMB", "executivo": "Ramon Oliveira"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:20 - 16:40", "empresa": "SAP", "executivo": "Thomas Hanser"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:45 - 17:05", "empresa": "GRUPO JBS", "executivo": "Adriano Santos Toro"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:45 - 17:05", "empresa": "LINDT & SPRUNGLI", "executivo": "Ailton Teixeira"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:45 - 17:05", "empresa": "ODONTOPREV", "executivo": "Andre Barbosa"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:45 - 17:05", "empresa": "AGRÁRIA", "executivo": "Atilas Ferreira de Paiva"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:45 - 17:05", "empresa": "BANCO BS2 / BONSUCESSO", "executivo": "Danilo Ricardo Bono Zimmermann"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:45 - 17:05", "empresa": "NORSK HYDRO", "executivo": "Denis Rezende"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:45 - 17:05", "empresa": "PRUMO LOGÍSTICA / PORTO DO AÇU", "executivo": "Fábio Viegas dos Reis"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:45 - 17:05", "empresa": "ADIMAX", "executivo": "Fernando Luiz Rostock"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:45 - 17:05", "empresa": "AMG", "executivo": "Helton José de Oliveira Ferreira"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:45 - 17:05", "empresa": "AZUL LINHAS AÉREAS", "executivo": "Henrique Rabenhorst"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:45 - 17:05", "empresa": "COFCO BRASIL", "executivo": "Jose Feliciano Ferreira Filho"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:45 - 17:05", "empresa": "EUCATEX", "executivo": "Marcio Roberto Crespo Cândido"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:45 - 17:05", "empresa": "DANNEMANN SIEMSEN BIGLER", "executivo": "Marcos Sergio de Oliveira Gomes"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:45 - 17:05", "empresa": "LAR", "executivo": "Saul Kirienco"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:45 - 17:05", "empresa": "ELFA MEDICAMENTOS", "executivo": "Vanderlei Gomes"}, {"data": "19/03/2026", "dia": "Quinta", "horario": "16:45 - 17:05", "empresa": "FAURECIA", "executivo": "Wagner Aparecido Oliveira"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "11:15 - 11:35", "empresa": "KRONA", "executivo": "Alan Patricio Leandro"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "11:15 - 11:35", "empresa": "VIBRA", "executivo": "Alexandre Wolf das Neves"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "11:15 - 11:35", "empresa": "TOKIO MARINE SEGURADORA", "executivo": "Dennis Milan"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "11:15 - 11:35", "empresa": "WEG", "executivo": "Dilnei Timm Klasen"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "11:15 - 11:35", "empresa": "LARCO PETRÓLEO", "executivo": "Emanoel Ferreira Meirelles"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "11:15 - 11:35", "empresa": "COOPERALFA", "executivo": "Fábio Bocassanta"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "11:15 - 11:35", "empresa": "DANA BRASIL", "executivo": "Fernando Biehl"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "11:15 - 11:35", "empresa": "RANDON", "executivo": "Fernando Bortolini"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "11:15 - 11:35", "empresa": "YPÊ", "executivo": "Geraldo Pereira Júnior"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "11:15 - 11:35", "empresa": "TK ELEVADORES BRASIL", "executivo": "Marcelo Przyczynski"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "11:15 - 11:35", "empresa": "COPEL", "executivo": "Marcos Henrique Marçal Camillo"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "11:15 - 11:35", "empresa": "SÃO JOÃO FARMÁCIAS", "executivo": "Mauricio Maffi"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "11:15 - 11:35", "empresa": "ALPARGATAS", "executivo": "Mauro Alarcon"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "11:15 - 11:35", "empresa": "VALECARD", "executivo": "Pablo Cancado Assis"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "11:15 - 11:35", "empresa": "FRUKI", "executivo": "Rafael Wolkmer"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "11:15 - 11:35", "empresa": "MACKENZIE", "executivo": "Ricardo Fukuda Marques"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "16:50 - 17:10", "empresa": "MARTIN-BROWER", "executivo": "André Campos"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "16:50 - 17:10", "empresa": "COOPERATIVA INTEGRADA", "executivo": "Andreia Regina Augusto da Silva"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "16:50 - 17:10", "empresa": "EMBRATEL STAR ONE", "executivo": "Camilo de Lellis Morais"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "16:50 - 17:10", "empresa": "GRUPO COMPORTE", "executivo": "Carlos Sergio M de Andrade"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "16:50 - 17:10", "empresa": "VIPAL", "executivo": "Cristiano Jacoby Müller"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "16:50 - 17:10", "empresa": "ICONIC LUBRIFICANTES", "executivo": "Felipe Mourão"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "16:50 - 17:10", "empresa": "PROFARMA", "executivo": "Fernando Locatelli"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "16:50 - 17:10", "empresa": "ADAMA", "executivo": "Luciano Mauro Giunzioni Lance"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "16:50 - 17:10", "empresa": "ALLOS", "executivo": "Luiz Augusto Martins"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "16:50 - 17:10", "empresa": "ZEMAX LOG", "executivo": "Marcus Felipe Alves Vieira"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "16:50 - 17:10", "empresa": "CARAMURU", "executivo": "Renato Pereira de Souza"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "16:50 - 17:10", "empresa": "UISA BIOENERGIA", "executivo": "Rodrigo Ribeiro Gonçalves"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "16:50 - 17:10", "empresa": "CEREAL COMÉRCIO", "executivo": "Rodrigo Santos Silva"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "16:50 - 17:10", "empresa": "ACHÉ", "executivo": "Samantha Lopes Martins"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "16:50 - 17:10", "empresa": "ALIBEM", "executivo": "Sandra Lais Pedroso"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "16:50 - 17:10", "empresa": "4NETWORK", "executivo": "Suzane Freires Machado"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:15 - 17:35", "empresa": "MAHLE", "executivo": "Ailton Gomes"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:15 - 17:35", "empresa": "LIBRELATO", "executivo": "Alexandre Corte Real"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:15 - 17:35", "empresa": "CLARK ATLANTA UNIVERSITY", "executivo": "Brian Benn"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:15 - 17:35", "empresa": "GSH CORP", "executivo": "Eduardo Gorges"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:15 - 17:35", "empresa": "GRANOL AGRICOLA", "executivo": "Enrico Raucci"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:15 - 17:35", "empresa": "DORI ALIMENTOS", "executivo": "Gustavo Valença Bertacini"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:15 - 17:35", "empresa": "PATRUS TRANSPORTES", "executivo": "Jefferson Andrade"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:15 - 17:35", "empresa": "USINA CORURIPE", "executivo": "Ledir Antunes Malaquias"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:15 - 17:35", "empresa": "SOMAH", "executivo": "Marcello José da Fonseca Borges"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:15 - 17:35", "empresa": "DELLA VIA PNEUS LTDA", "executivo": "Marcos Paulo Correa"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:15 - 17:35", "empresa": "M CASSAB", "executivo": "Raphael Bacarov"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:15 - 17:35", "empresa": "UNIPAR CARBOCLORO", "executivo": "Ricardo Nanni"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:15 - 17:35", "empresa": "ALL4LABELS", "executivo": "Rita de Cassia Piciura"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:15 - 17:35", "empresa": "ANGELONI", "executivo": "Roberto Alexandre Cardoso"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:15 - 17:35", "empresa": "BRADO LOGÍSTICA", "executivo": "Sandro Skowronski"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:40 - 18:00", "empresa": "APERAM SOUTH AMERICA", "executivo": "Alexandre Henrique Farah Dias"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:40 - 18:00", "empresa": "VICUNHA TÊXTIL", "executivo": "Ana Baldini"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:40 - 18:00", "empresa": "FUNDAÇÃO BUTANTAN", "executivo": "Cláudia Anania Santos da Silva"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:40 - 18:00", "empresa": "CADENCE EDUCATION", "executivo": "David Earl Rice Jr."}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:40 - 18:00", "empresa": "AGREX", "executivo": "Edgard Souza"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:40 - 18:00", "empresa": "FIRJAN", "executivo": "Jorge Luiz de Paula Martins Filho"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:40 - 18:00", "empresa": "GRUPO SC", "executivo": "Jorge Stakowiak"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:40 - 18:00", "empresa": "BANCO RENDIMENTO", "executivo": "Josmar Peixe"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:40 - 18:00", "empresa": "ARCELORMITTAL BRASIL", "executivo": "Kelly Christian Camelo Teixeira"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:40 - 18:00", "empresa": "AREZZO&CO", "executivo": "Marcelo Luciano Manoel"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:40 - 18:00", "empresa": "TERMOMECÂNICA", "executivo": "Marcelo Viana Salles"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:40 - 18:00", "empresa": "GRUPO MARQUISE", "executivo": "Mikie Ripardo"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:40 - 18:00", "empresa": "AURORA ALIMENTOS", "executivo": "Raphael Fernandez"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:40 - 18:00", "empresa": "DELL", "executivo": "Roberto Petry"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:40 - 18:00", "empresa": "BISTEK SUPERMERCADOS", "executivo": "Tatiana Goes Mendonça"}, {"data": "20/03/2026", "dia": "Sexta", "horario": "17:40 - 18:00", "empresa": "NEOENERGIA ELEKTRO", "executivo": "Vivian Prieto"}];
+
+// Build horario filter
+const horariosUnicos = [...new Set(REUNIOES.map(r => r.horario))].sort();
+const horaSelect = document.getElementById('filter-hora-reuniao');
+horariosUnicos.forEach(h => {
+  const opt = document.createElement('option');
+  opt.value = h;
+  opt.textContent = h;
+  horaSelect.appendChild(opt);
+});
+
+function renderReunioes(list) {
+  const tbody = document.getElementById('reunioes-tbody');
+  const empty = document.getElementById('empty-reunioes');
+  const table = document.getElementById('reunioes-table').parentElement;
+  tbody.innerHTML = '';
+
+  if (!list.length) {
+    empty.style.display = 'block';
+    table.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  table.style.display = 'block';
+
+  list.forEach((r, i) => {
+    const tr = document.createElement('tr');
+    tr.style.cssText = `border-bottom:1px solid var(--gray-100);background:${i % 2 === 0 ? 'var(--white)' : 'var(--gray-50)'};transition:background 0.15s;`;
+    tr.onmouseenter = () => tr.style.background = 'rgba(21,36,84,0.04)';
+    tr.onmouseleave = () => tr.style.background = i % 2 === 0 ? 'var(--white)' : 'var(--gray-50)';
+
+    tr.innerHTML = `
+      <td style="padding:13px 18px;font-size:13px;font-weight:700;color:var(--navy);white-space:nowrap;">
+        <div>${r.dia}</div>
+        <div style="font-weight:400;color:var(--gray-400);font-size:11px;">${r.data}</div>
+      </td>
+      <td style="padding:13px 18px;font-size:13px;white-space:nowrap;">
+        <span style="background:rgba(21,36,84,0.08);color:var(--navy);font-weight:700;font-size:11px;padding:4px 10px;border-radius:8px;">${r.horario}</span>
+      </td>
+      <td style="padding:13px 18px;font-size:13px;font-weight:700;color:var(--navy);">${r.empresa}</td>
+      <td style="padding:13px 18px;font-size:13px;color:var(--gray-600);">${r.executivo}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function filterReunioes() {
+  const q = document.getElementById('search-reuniao').value.toLowerCase().trim();
+  const data = document.getElementById('filter-data-reuniao').value;
+  const hora = document.getElementById('filter-hora-reuniao').value;
+
+  const filtered = REUNIOES.filter(r => {
+    if (q && !r.empresa.toLowerCase().includes(q) && !r.executivo.toLowerCase().includes(q)) return false;
+    if (data && r.data !== data) return false;
+    if (hora && r.horario !== hora) return false;
+    return true;
+  });
+
+  document.getElementById('count-reunioes').textContent = filtered.length;
+  renderReunioes(filtered);
+}
+
+// Init reunioes
+// ── INIT ──
+renderEmpresas(DATA.empresas);
+renderHorarios();
+renderReunioes(REUNIOES);
+</script>
+
+</body>
+</html>
